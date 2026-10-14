@@ -1,0 +1,144 @@
+{
+  "name": "fetchpad",
+  "displayName": "Fetchpad",
+  "version": "0.1.0",
+  "private": true,
+  "publisher": "local",
+  "description": "A map of your codebase built only from parsing the source: pages, endpoints and tables, and how they connect.",
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "icon": "media/icon.png",
+  "main": "./dist/extension.js",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Visualization"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "fetchpad",
+          "title": "Fetchpad",
+          "icon": "media/fetchpad.svg"
+        }
+      ]
+    },
+    "views": {
+      "fetchpad": [
+        {
+          "id": "fetchpad.contents",
+          "name": "Code Map",
+          "icon": "media/fetchpad.svg",
+          "contextualTitle": "Fetchpad"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "fetchpad.contents",
+        "contents": "Fetchpad maps the code in a folder: its pages, endpoints and tables, and how they connect.\n[Open Folder](command:workbench.action.files.openFolder)",
+        "when": "workbenchState == empty"
+      }
+    ],
+    "commands": [
+      {
+        "command": "fetchpad.openMap",
+        "title": "Open Code Map",
+        "category": "Fetchpad",
+        "icon": "$(type-hierarchy)"
+      },
+      {
+        "command": "fetchpad.refresh",
+        "title": "Analyze Again",
+        "category": "Fetchpad",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "fetchpad.chooseFolder",
+        "title": "Choose Folder to Map",
+        "category": "Fetchpad",
+        "icon": "$(root-folder)"
+      },
+      {
+        "command": "fetchpad.focus",
+        "title": "Show on the Map",
+        "category": "Fetchpad"
+      },
+      {
+        "command": "fetchpad.openSource",
+        "title": "Open Source",
+        "category": "Fetchpad",
+        "icon": "$(go-to-file)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "fetchpad.openMap",
+          "when": "view == fetchpad.contents",
+          "group": "navigation@1"
+        },
+        {
+          "command": "fetchpad.refresh",
+          "when": "view == fetchpad.contents",
+          "group": "navigation@2"
+        },
+        {
+          "command": "fetchpad.chooseFolder",
+          "when": "view == fetchpad.contents && workspaceFolderCount > 1",
+          "group": "navigation@3"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "fetchpad.openSource",
+          "when": "view == fetchpad.contents && viewItem == hasSource",
+          "group": "inline"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "fetchpad.focus",
+          "when": "false"
+        },
+        {
+          "command": "fetchpad.openSource",
+          "when": "false"
+        },
+        {
+          "command": "fetchpad.chooseFolder",
+          "when": "workspaceFolderCount > 1"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "watch": "node scripts/build.mjs --watch",
+    "package": "node scripts/build.mjs --production && vsce package --no-dependencies --allow-missing-repository --skip-license",
+    "analyze": "tsx src/cli/analyze.ts",
+    "harness": "tsx scripts/harness.ts",
+    "test": "node --import tsx --test \"test/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p src/webview"
+  },
+  "dependencies": {
+    "@xyflow/react": "^12.12.0",
+    "elkjs": "^0.12.0",
+    "jsonc-parser": "^3.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "shiki": "^3.23.0",
+    "typescript": "~5.9.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@types/vscode": "^1.95.0",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.28.2",
+    "tsx": "^4.23.15"
+  }
+}

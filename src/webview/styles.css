@@ -1,0 +1,265 @@
+/* Every colour comes from the VS Code theme, so the map follows light, dark and high-contrast themes. */
+:root {
+  --fp-bg: var(--vscode-editor-background);
+  --fp-fg: var(--vscode-editor-foreground);
+  --fp-muted: var(--vscode-descriptionForeground);
+  --fp-border: var(--vscode-editorWidget-border, var(--vscode-panel-border, rgb(128 128 128 / 0.35)));
+  --fp-block-bg: var(--vscode-editorWidget-background, var(--vscode-sideBar-background, var(--fp-bg)));
+  --fp-accent: var(--vscode-focusBorder);
+  --fp-hover: var(--vscode-toolbar-hoverBackground, rgb(128 128 128 / 0.18));
+
+  --fp-blue: var(--vscode-charts-blue, #3794ff);
+  --fp-green: var(--vscode-charts-green, #89d185);
+  --fp-orange: var(--vscode-charts-orange, #d18616);
+  --fp-purple: var(--vscode-charts-purple, #b180d7);
+  --fp-red: var(--vscode-charts-red, #f14c4c);
+  --fp-yellow: var(--vscode-charts-yellow, #cca700);
+  --fp-grey: var(--vscode-editorLineNumber-foreground, #858585);
+
+  --fp-edge-calls: var(--fp-grey);
+  --fp-edge-renders: var(--fp-purple);
+  --fp-edge-requests: var(--fp-blue);
+  --fp-edge-reads: var(--fp-green);
+  --fp-edge-writes: var(--fp-orange);
+}
+
+html, body, #root { height: 100%; margin: 0; }
+body {
+  background: var(--fp-bg);
+  color: var(--fp-fg);
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-font-size, 13px);
+  padding: 0;
+  overflow: hidden;
+}
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 1px solid var(--fp-accent); outline-offset: 1px; }
+
+/* ── Shell ─────────────────────────────────────────── */
+.fp-app { display: flex; flex-direction: column; height: 100%; }
+.fp-toolbar {
+  display: flex; align-items: center; gap: 6px;
+  height: 36px; padding: 0 8px; flex: none;
+  border-bottom: 1px solid var(--fp-border);
+}
+.fp-title { font-size: 13px; font-weight: 600; margin: 0 6px 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.fp-title-kind { margin-left: 8px; font-weight: 400; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fp-muted); }
+.fp-toggle { display: inline-flex; align-items: center; gap: 4px; color: var(--fp-muted); white-space: nowrap; cursor: pointer; }
+.fp-toggle input { margin: 0; accent-color: var(--fp-accent); }
+.fp-status { margin-left: auto; color: var(--fp-muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.fp-status.is-error { color: var(--vscode-errorForeground, var(--fp-red)); }
+.fp-status.is-analyzing::before {
+  content: ''; display: inline-block; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%;
+  background: var(--fp-accent); animation: fp-pulse 1s ease-in-out infinite alternate;
+}
+@keyframes fp-pulse { from { opacity: 0.25; } to { opacity: 1; } }
+.fp-icon-button {
+  display: inline-grid; place-items: center; width: 26px; height: 26px; flex: none;
+  border: 0; border-radius: 4px; background: transparent; cursor: pointer; color: var(--vscode-icon-foreground, var(--fp-fg));
+}
+.fp-icon-button:hover:not(:disabled) { background: var(--fp-hover); }
+.fp-icon-button:disabled { opacity: 0.4; cursor: default; }
+.fp-icon-button[aria-pressed='true'] { color: var(--fp-accent); }
+.fp-main { flex: 1; display: flex; min-height: 0; }
+.fp-canvas { flex: 1; position: relative; min-width: 0; }
+.fp-empty { display: grid; place-items: center; height: 100%; color: var(--fp-muted); padding: 24px; text-align: center; }
+
+/* ── Sidebar ───────────────────────────────────────── */
+.fp-sidebar {
+  width: 280px; flex: none; overflow-y: auto; padding-bottom: 16px;
+  background: var(--vscode-sideBar-background, var(--fp-bg));
+  border-right: 1px solid var(--fp-border);
+}
+.fp-search {
+  display: block; box-sizing: border-box; width: calc(100% - 16px); margin: 8px;
+  padding: 4px 6px; border-radius: 2px;
+  background: var(--vscode-input-background); color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border, transparent);
+}
+.fp-search:focus { outline: 1px solid var(--fp-accent); outline-offset: -1px; }
+.fp-list { list-style: none; margin: 0; padding: 0; }
+.fp-section > summary {
+  padding: 8px 10px 4px; cursor: pointer; user-select: none;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--fp-muted);
+}
+.fp-count { font-weight: 400; margin-left: 4px; }
+.fp-group { padding: 6px 10px 2px 14px; font-size: 11px; color: var(--fp-muted); font-family: var(--vscode-editor-font-family); }
+.fp-item {
+  display: flex; align-items: center; gap: 6px; width: 100%;
+  padding: 3px 10px 3px 18px; border: 0; background: transparent; cursor: pointer;
+  text-align: left; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.fp-item-top { padding-left: 10px; font-weight: 600; }
+.fp-item:hover { background: var(--vscode-list-hoverBackground, var(--fp-hover)); }
+.fp-item.is-current {
+  background: var(--vscode-list-activeSelectionBackground, var(--fp-hover));
+  color: var(--vscode-list-activeSelectionForeground, inherit);
+}
+.fp-item-hint { color: var(--fp-muted); font-size: 11px; }
+.fp-gap { white-space: normal; color: var(--vscode-editorWarning-foreground, var(--fp-yellow)); }
+.fp-missing { color: var(--vscode-errorForeground, var(--fp-red)); text-decoration: underline dotted; }
+
+/* HTTP methods: colour plus the method text itself, never colour alone. */
+.fp-method {
+  display: inline-block; min-width: 3.2em; padding: 0 4px; border-radius: 3px; text-align: center;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.02em; line-height: 16px;
+  font-family: var(--vscode-editor-font-family);
+  color: var(--fp-method); background: color-mix(in srgb, var(--fp-method) 16%, transparent);
+}
+.fp-method-get { --fp-method: var(--fp-blue); }
+.fp-method-post { --fp-method: var(--fp-green); }
+.fp-method-put, .fp-method-patch { --fp-method: var(--fp-orange); }
+.fp-method-delete { --fp-method: var(--fp-red); }
+.fp-method-all { --fp-method: var(--fp-grey); }
+
+/* ── React Flow theme ──────────────────────────────── */
+.react-flow {
+  --xy-background-color: var(--fp-bg);
+  --xy-background-pattern-color: var(--vscode-editorIndentGuide-background1, rgb(128 128 128 / 0.25));
+  --xy-controls-button-background-color: var(--fp-block-bg);
+  --xy-controls-button-background-color-hover: var(--fp-hover);
+  --xy-controls-button-color: var(--fp-fg);
+  --xy-controls-button-color-hover: var(--fp-fg);
+  --xy-controls-button-border-color: var(--fp-border);
+  --xy-controls-box-shadow: none;
+  --xy-minimap-background-color: var(--fp-block-bg);
+  --xy-minimap-mask-background-color: rgb(0 0 0 / 0.3);
+  --xy-minimap-mask-stroke-color: var(--fp-accent);
+  --xy-node-boxshadow-selected: none;
+  --xy-edge-stroke-default: var(--fp-grey);
+}
+.react-flow__controls { border: 1px solid var(--fp-border); border-radius: 4px; overflow: hidden; }
+.react-flow__attribution { background: transparent; padding: 2px 6px; font-size: 10px; }
+.react-flow__attribution a { color: var(--fp-muted); }
+.react-flow__minimap { border: 1px solid var(--fp-border); border-radius: 4px; }
+.fp-mini { fill: var(--fp-grey); }
+.fp-mini-page, .fp-mini-ui { fill: var(--fp-purple); }
+.fp-mini-client, .fp-mini-route { fill: var(--fp-blue); }
+.fp-mini-handler { fill: var(--fp-green); }
+.fp-mini-service { fill: var(--fp-yellow); }
+.fp-mini-data, .fp-mini-table { fill: var(--fp-orange); }
+.fp-mini-hidden { display: none; }
+.fp-handle { opacity: 0; pointer-events: none; width: 1px !important; height: 1px !important; min-width: 0; min-height: 0; border: 0 !important; }
+
+/* ── Blocks ────────────────────────────────────────── */
+.fp-block {
+  --fp-layer: var(--fp-grey);
+  box-sizing: border-box; display: flex; flex-direction: column; gap: 1px;
+  padding: 6px 8px 6px 11px; border-radius: 6px; overflow: hidden;
+  background: var(--fp-block-bg); border: 1px solid var(--fp-border);
+  box-shadow: inset 3px 0 0 var(--fp-layer);
+  transition: opacity 120ms ease;
+  cursor: default;
+}
+.fp-layer-page, .fp-layer-ui { --fp-layer: var(--fp-purple); }
+.fp-layer-client, .fp-layer-route { --fp-layer: var(--fp-blue); }
+.fp-layer-handler { --fp-layer: var(--fp-green); }
+.fp-layer-service, .fp-layer-middleware { --fp-layer: var(--fp-yellow); }
+.fp-layer-data, .fp-layer-table { --fp-layer: var(--fp-orange); }
+.fp-block.is-focus { border: 2px solid var(--fp-accent); padding: 5px 7px 5px 10px; }
+.fp-block.is-lit { border-color: var(--fp-accent); }
+.fp-block.is-dim { opacity: 0.3; }
+.fp-block.is-warning { border: 1px dashed var(--vscode-errorForeground, var(--fp-red)); }
+.fp-block-head { display: flex; align-items: center; height: 18px; }
+.fp-kind { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fp-muted); }
+.fp-actions { margin-left: auto; display: flex; gap: 2px; opacity: 0; transition: opacity 120ms ease; }
+.fp-block:hover .fp-actions, .fp-block:focus-within .fp-actions,
+.fp-block.has-overlay .fp-actions, .fp-zoomed-in .fp-actions { opacity: 1; }
+.fp-actions button, .fp-overlay-head button {
+  display: inline-grid; place-items: center; width: 20px; height: 18px; padding: 0;
+  border: 0; border-radius: 3px; background: transparent; color: var(--fp-muted); cursor: pointer;
+}
+.fp-actions button:hover, .fp-overlay-head button:hover { background: var(--fp-hover); color: var(--fp-fg); }
+.fp-actions button.is-on, .fp-overlay-head button.is-on {
+  background: var(--vscode-button-background); color: var(--vscode-button-foreground);
+}
+.fp-block-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 20px; }
+.fp-block-name .fp-method { margin-right: 2px; vertical-align: 1px; }
+.fp-block-sub { font-size: 11.5px; color: var(--fp-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fp-chips { display: flex; gap: 4px; margin-top: 4px; overflow: hidden; }
+.fp-chip {
+  flex: none; max-width: 100%; padding: 1px 7px; border-radius: 10px; cursor: pointer;
+  font-size: 11px; line-height: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  border: 1px solid color-mix(in srgb, var(--fp-yellow) 55%, transparent);
+  background: color-mix(in srgb, var(--fp-yellow) 12%, transparent);
+}
+.fp-chip:hover { background: color-mix(in srgb, var(--fp-yellow) 24%, transparent); }
+.fp-chip.is-on { background: var(--vscode-button-background); color: var(--vscode-button-foreground); border-color: transparent; }
+.fp-column-title {
+  box-sizing: border-box; padding-bottom: 6px; text-align: center; pointer-events: none;
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fp-muted);
+  border-bottom: 1px solid var(--fp-border);
+}
+.react-flow__node-column { pointer-events: none !important; }
+
+/* ── Edges ─────────────────────────────────────────── */
+.fp-edge-line { fill: none; stroke: var(--fp-edge); stroke-width: 1.4; transition: opacity 120ms ease; }
+.fp-edge-hit { fill: none; stroke: transparent; stroke-width: 14; cursor: pointer; }
+.fp-edge { --fp-edge: var(--fp-edge-calls); }
+.fp-edge-renders { --fp-edge: var(--fp-edge-renders); }
+.fp-edge-requests { --fp-edge: var(--fp-edge-requests); }
+.fp-edge-requests .fp-edge-line { stroke-width: 1.8; }
+.fp-edge-reads { --fp-edge: var(--fp-edge-reads); }
+.fp-edge-writes { --fp-edge: var(--fp-edge-writes); }
+.fp-edge-writes .fp-edge-line { stroke-width: 2; }
+.fp-edge.is-unresolved .fp-edge-line { stroke-dasharray: 5 4; }
+.fp-edge.is-lit .fp-edge-line { stroke-width: 2.6; }
+.fp-edge.is-dim { opacity: 0.1; }
+.fp-leader { fill: none; stroke: var(--fp-accent); stroke-width: 1; stroke-dasharray: 3 3; }
+
+.fp-legend {
+  display: flex; flex-wrap: wrap; gap: 4px 12px; padding: 5px 10px; margin-bottom: 8px !important;
+  font-size: 11px; color: var(--fp-muted);
+  background: var(--fp-block-bg); border: 1px solid var(--fp-border); border-radius: 4px;
+}
+.fp-legend { left: 52px !important; }
+.fp-key { display: inline-flex; align-items: center; gap: 5px; }
+.fp-key-line { stroke-width: 2; stroke: var(--fp-grey); }
+.fp-key-requests { stroke: var(--fp-edge-requests); }
+.fp-key-renders { stroke: var(--fp-edge-renders); }
+.fp-key-writes { stroke: var(--fp-edge-writes); }
+.fp-key-reads { stroke: var(--fp-edge-reads); }
+.fp-key-unresolved { stroke-dasharray: 4 3; }
+.fp-empty-panel { padding: 8px 12px; color: var(--fp-muted); background: var(--fp-block-bg); border: 1px solid var(--fp-border); border-radius: 4px; }
+
+/* ── Code previews ─────────────────────────────────── */
+.fp-overlay {
+  width: 560px; display: flex; flex-direction: column; overflow: hidden;
+  background: var(--fp-code-bg, var(--fp-bg)); color: var(--fp-code-fg, var(--fp-fg));
+  border: 1px solid var(--fp-accent); border-radius: 6px;
+  box-shadow: 0 6px 24px var(--vscode-widget-shadow, rgb(0 0 0 / 0.4));
+}
+.fp-overlay-head {
+  display: flex; align-items: center; gap: 6px; padding: 4px 6px 4px 10px; cursor: grab;
+  background: var(--vscode-editorGroupHeader-tabsBackground, var(--fp-block-bg)); color: var(--fp-fg);
+  border-bottom: 1px solid var(--fp-border); font-size: 12px;
+}
+.fp-overlay-head:active { cursor: grabbing; }
+.fp-overlay-file { font-weight: 600; white-space: nowrap; }
+.fp-overlay-name { flex: 1; color: var(--fp-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fp-overlay-body { max-height: 380px; overflow: auto; cursor: text; user-select: text; }
+.fp-overlay-msg { padding: 12px; color: var(--fp-muted); }
+.fp-code {
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: var(--vscode-editor-font-size, 12px);
+  line-height: 1.5; padding: 4px 0; min-width: max-content;
+}
+.fp-line { display: flex; }
+.fp-ln {
+  flex: none; width: 3.2em; padding-right: 1em; text-align: right; user-select: none;
+  color: var(--vscode-editorLineNumber-foreground, var(--fp-grey));
+  border-left: 2px solid transparent;
+}
+.fp-src { white-space: pre; tab-size: 4; padding-right: 12px; }
+.fp-line.is-block { background: color-mix(in srgb, var(--fp-accent) 12%, transparent); }
+.fp-line.is-block .fp-ln { border-left-color: var(--fp-accent); color: var(--vscode-editorLineNumber-activeForeground, var(--fp-fg)); }
+.fp-fold {
+  display: block; width: 100%; padding: 2px 12px 2px 3.6em; border: 0; text-align: left; cursor: pointer;
+  font-size: 11px; color: var(--fp-muted);
+  background: var(--vscode-editor-foldBackground, rgb(128 128 128 / 0.12));
+}
+.fp-fold:hover { color: var(--fp-fg); text-decoration: underline; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before { transition: none !important; animation: none !important; }
+}

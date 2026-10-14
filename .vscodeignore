@@ -1,0 +1,9 @@
+src/**
+test/**
+scripts/**
+node_modules/**
+.vscode/**
+.fetchpad/**
+**/*.map
+**/tsconfig*.json
+.gitignore
